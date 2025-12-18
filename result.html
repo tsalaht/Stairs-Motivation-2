@@ -18,7 +18,13 @@
 
     <main class="card">
       <section class="result-summary">
-        <h2 data-i18n-key="result_summary_title">Session Summary</h2>
+        <div class="result-header-row">
+          <div class="result-header-left">
+            <div class="game-badge">🏆 Session Result</div>
+            <h2 class="game-title" data-i18n-key="result_summary_title">Session Summary</h2>
+          </div>
+          <div class="result-medal" id="res-medal">🥉</div>
+        </div>
         <p id="res-direction" class="info-line"></p>
         <p id="res-rank" class="info-line"></p>
         <div class="result-grid">
@@ -55,16 +61,16 @@
 
       <section class="actions">
         <button class="btn primary-btn" id="btn-continue" data-i18n-key="btn_continue_climbing">
-          Continue Climbing
+          ▶ Continue Climbing
         </button>
         <button class="btn secondary-btn" onclick="window.location.href='scanner.html'" data-i18n-key="btn_new_session">
-          New Session
+          🔁 New Session
         </button>
         <button class="btn secondary-btn" onclick="window.location.href='scoreboard.html'" data-i18n-key="btn_view_scoreboard">
-          View Scoreboard
+          📊 View Scoreboard
         </button>
         <button class="btn tertiary-btn" onclick="window.location.href='index.html'" data-i18n-key="btn_back_home">
-          Back to Home
+          ⬅ Back to Home
         </button>
       </section>
     </main>
@@ -97,20 +103,32 @@
       document.getElementById('res-avg').textContent =
         session.floors > 0 ? formatDuration(session.avgPerFloorSec) : '—';
 
-      // Direction text (up or down)
+      // Direction text (up or down) with simple icon
       const dirEl = document.getElementById('res-direction');
       if (session.direction === 'down') {
-        dirEl.textContent = `${session.steps} steps DOWN – nice control!`;
+        dirEl.textContent = `⬇ ${session.steps} steps DOWN – nice control!`;
       } else {
-        dirEl.textContent = `${session.steps} steps UP – great climb!`;
+        dirEl.textContent = `⬆ ${session.steps} steps UP – great climb!`;
       }
 
       // Rank text from scoreboard (if available)
       const rankEl = document.getElementById('res-rank');
+      const medalEl = document.getElementById('res-medal');
       if (session.rankBySteps) {
-        rankEl.textContent = `Your current position on the scoreboard by steps: #${session.rankBySteps}`;
+        const rank = session.rankBySteps;
+        rankEl.textContent = `Your current position on the scoreboard by steps: #${rank}`;
+        if (rank === 1) {
+          medalEl.textContent = '🥇';
+        } else if (rank === 2) {
+          medalEl.textContent = '🥈';
+        } else if (rank === 3) {
+          medalEl.textContent = '🥉';
+        } else {
+          medalEl.textContent = '🎖️';
+        }
       } else {
         rankEl.textContent = '';
+        medalEl.textContent = '🎮';
       }
     }
 

@@ -424,6 +424,31 @@
     font-size: 1rem;
     margin-bottom: 10px;
   }
+
+  .result-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .result-header-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .result-medal {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.12), transparent 60%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+  }
   
   .result-grid {
     display: grid;
