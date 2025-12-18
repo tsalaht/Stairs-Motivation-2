@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stair Motivation - Scanner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <button class="btn back-btn" onclick="window.location.href='index.html'">
+        ←
+      </button>
+      <h1 data-i18n-key="scanner_title">Scan Floor QR</h1>
+      <button id="lang-toggle" class="lang-toggle" data-i18n-key="btn_lang_ar">عربي</button>
+    </header>
+
+    <main class="card">
+      <section class="info-block">
+        <p id="scanner-username" class="info-line"></p>
+        <p class="info-line" data-i18n-key="scanner_instruction">
+          Scan the QR code at your current floor to start.
+        </p>
+      </section>
+
+      <section class="timer-block">
+        <span class="timer-label" data-i18n-key="label_timer">Time</span>
+        <div id="timer-display" class="timer-display">00:00.0</div>
+      </section>
+
+      <section class="scanner-block">
+        <div id="qr-reader" class="qr-reader"></div>
+        <div id="scanner-status" class="status-message"></div>
+      </section>
+
+      <section class="actions">
+        <button id="btn-restart" class="btn secondary-btn" data-i18n-key="btn_restart_session">
+          Restart Session
+        </button>
+        <button id="btn-stop" class="btn danger-btn" data-i18n-key="btn_cancel_session">
+          Cancel
+        </button>
+      </section>
+
+      <section class="hint-block">
+        <p class="hint" data-i18n-key="scanner_hint_start">
+          1) Scan your start floor. 2) Climb. 3) Scan your end floor.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <!-- External libraries (replace with local copies for full offline use) -->
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/scanner.js"></script>
+  <script>
+    document.getElementById('lang-toggle').addEventListener('click', toggleLanguage);
+  </script>
+</body>
+</html>

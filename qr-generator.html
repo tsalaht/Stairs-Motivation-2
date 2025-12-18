@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stair Motivation - QR Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <button class="btn back-btn" onclick="window.location.href='index.html'">
+        ←
+      </button>
+      <h1 data-i18n-key="qrgen_title">QR Code Generator</h1>
+      <button id="lang-toggle" class="lang-toggle" data-i18n-key="btn_lang_ar">عربي</button>
+    </header>
+
+    <main class="card">
+      <section class="qrgen-intro">
+        <p data-i18n-key="qrgen_description">
+          Automatically generate QR codes for floors 0–8. Each QR contains the floor
+          number in JSON format.
+        </p>
+        <button id="btn-download-pdf" class="btn primary-btn" data-i18n-key="btn_download_pdf">
+          Download PDF
+        </button>
+      </section>
+
+      <section id="qr-grid" class="qr-grid">
+        <!-- Individual floor QR cards (for screen) -->
+      </section>
+
+      <!-- Hidden container used only for PDF generation -->
+      <div id="pdf-pages" class="pdf-pages" aria-hidden="true"></div>
+    </main>
+  </div>
+
+  <!-- External libraries (replace with local copies for true offline) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script src="js/i18n.js"></script>
+  <!-- Corrected path: actual file is js/r-generator.js -->
+  <script src="js/r-generator.js"></script>
+  <script>
+    document.getElementById('lang-toggle').addEventListener('click', toggleLanguage);
+  </script>
+</body>
+</html>

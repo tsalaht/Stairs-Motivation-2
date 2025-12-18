@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stair Motivation - Result</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <button class="btn back-btn" onclick="window.location.href='scanner.html'">
+        ←
+      </button>
+      <h1 data-i18n-key="result_title">Your Result</h1>
+      <button id="lang-toggle" class="lang-toggle" data-i18n-key="btn_lang_ar">عربي</button>
+    </header>
+
+    <main class="card">
+      <section class="result-summary">
+        <h2 data-i18n-key="result_summary_title">Session Summary</h2>
+        <div class="result-grid">
+          <div class="result-item">
+            <span class="label" data-i18n-key="label_name">Name</span>
+            <span id="res-name" class="value"></span>
+          </div>
+          <div class="result-item">
+            <span class="label" data-i18n-key="label_start_floor">Start floor</span>
+            <span id="res-start-floor" class="value"></span>
+          </div>
+          <div class="result-item">
+            <span class="label" data-i18n-key="label_end_floor">End floor</span>
+            <span id="res-end-floor" class="value"></span>
+          </div>
+          <div class="result-item">
+            <span class="label" data-i18n-key="label_floors_climbed">Floors climbed</span>
+            <span id="res-floors" class="value"></span>
+          </div>
+          <div class="result-item">
+            <span class="label" data-i18n-key="label_steps_climbed">Steps climbed</span>
+            <span id="res-steps" class="value"></span>
+          </div>
+          <div class="result-item">
+            <span class="label" data-i18n-key="label_time_spent">Time spent</span>
+            <span id="res-time" class="value"></span>
+          </div>
+          <div class="result-item">
+            <span class="label" data-i18n-key="label_avg_per_floor">Avg time/floor</span>
+            <span id="res-avg" class="value"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="actions">
+        <button class="btn primary-btn" id="btn-continue" data-i18n-key="btn_continue_climbing">
+          Continue Climbing
+        </button>
+        <button class="btn secondary-btn" onclick="window.location.href='scanner.html'" data-i18n-key="btn_new_session">
+          New Session
+        </button>
+        <button class="btn secondary-btn" onclick="window.location.href='scoreboard.html'" data-i18n-key="btn_view_scoreboard">
+          View Scoreboard
+        </button>
+        <button class="btn tertiary-btn" onclick="window.location.href='index.html'" data-i18n-key="btn_back_home">
+          Back to Home
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script>
+    function formatDuration(seconds) {
+      const s = Math.floor(seconds);
+      const ms = Math.round((seconds - s) * 10);
+      const mins = Math.floor(s / 60);
+      const secs = s % 60;
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${ms}`;
+    }
+
+    function loadResult() {
+      const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+      const session = appState.lastSession;
+      if (!session) {
+        window.location.href = 'scanner.html';
+        return;
+      }
+
+      document.getElementById('res-name').textContent = session.name || '-';
+      document.getElementById('res-start-floor').textContent = session.startFloor;
+      document.getElementById('res-end-floor').textContent = session.endFloor;
+      document.getElementById('res-floors').textContent = session.floors;
+      document.getElementById('res-steps').textContent = session.steps;
+      document.getElementById('res-time').textContent = formatDuration(session.durationSec);
+      document.getElementById('res-avg').textContent =
+        session.floors > 0 ? formatDuration(session.avgPerFloorSec) : '—';
+    }
+
+    document.getElementById('btn-continue').addEventListener('click', function () {
+      // Set current floor to last end floor and go to scanner
+      const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+      const session = appState.lastSession;
+      if (session) {
+        appState.currentFloor = session.endFloor;
+        localStorage.setItem('stairApp', JSON.stringify(appState));
+      }
+      window.location.href = 'scanner.html';
+    });
+
+    document.getElementById('lang-toggle').addEventListener('click', toggleLanguage);
+
+    (function init() {
+      const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+      const lang = appState.lang || 'en';
+      setLanguage(lang);
+      loadResult();
+    })();
+  </script>
+</body>
+</html>

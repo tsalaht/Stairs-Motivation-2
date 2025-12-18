@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stair Motivation - Welcome</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1 data-i18n-key="app_title">Stair Motivation</h1>
+      <button id="lang-toggle" class="lang-toggle" data-i18n-key="btn_lang_ar">عربي</button>
+    </header>
+
+    <main class="card">
+      <h2 data-i18n-key="welcome_title">Welcome</h2>
+      <p class="description" data-i18n-key="welcome_subtitle">
+        Climb the stairs, track your progress, and stay motivated!
+      </p>
+
+      <form id="welcome-form" class="form">
+        <label for="username" data-i18n-key="label_name">Your name</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          required
+          maxlength="50"
+          data-i18n-placeholder="placeholder_name"
+          placeholder="Enter your name"
+        />
+
+        <div class="field-group">
+          <span class="field-label" data-i18n-key="label_language">Language</span>
+          <div class="language-options">
+            <label class="radio-label">
+              <input type="radio" name="language" value="en" checked />
+              <span data-i18n-key="lang_en">English</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="language" value="ar" />
+              <span data-i18n-key="lang_ar">العربية</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn primary-btn" data-i18n-key="btn_start">
+          Start
+        </button>
+      </form>
+
+      <div class="link-group">
+        <a href="scoreboard.html" class="link" data-i18n-key="link_scoreboard">
+          View Scoreboard
+        </a>
+        <a href="qr-generator.html" class="link" data-i18n-key="link_qr_generator">
+          QR Generator
+        </a>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <small data-i18n-key="footer_note">
+        8-floor building · 21 steps per floor · No elevator excuses!
+      </small>
+    </footer>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script>
+    // Handle welcome form submission
+    document.getElementById('welcome-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('username');
+      const name = nameInput.value.trim();
+      if (!name) {
+        alert(getI18nText('error_name_required') || 'Please enter your name.');
+        return;
+      }
+
+      const lang = document.querySelector('input[name="language"]:checked')?.value || 'en';
+
+      // Save to LocalStorage
+      const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+      appState.userName = name;
+      appState.lang = lang;
+      localStorage.setItem('stairApp', JSON.stringify(appState));
+
+      // Apply language and go to scanner
+      setLanguage(lang);
+      window.location.href = 'scanner.html';
+    });
+
+    // Initialize language from saved state
+    (function initLangFromStorage() {
+      const saved = JSON.parse(localStorage.getItem('stairApp') || '{}');
+      const lang = saved.lang || 'en';
+      const radio = document.querySelector(`input[name="language"][value="${lang}"]`);
+      if (radio) radio.checked = true;
+      setLanguage(lang);
+    })();
+
+    // Toggle language via header button
+    document.getElementById('lang-toggle').addEventListener('click', toggleLanguage);
+  </script>
+</body>
+</html>

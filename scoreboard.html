@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stair Motivation - Scoreboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <button class="btn back-btn" onclick="window.location.href='index.html'">
+        ←
+      </button>
+      <h1 data-i18n-key="scoreboard_title">Scoreboard</h1>
+      <button id="lang-toggle" class="lang-toggle" data-i18n-key="btn_lang_ar">عربي</button>
+    </header>
+
+    <main class="card">
+      <section class="scoreboard-controls">
+        <h2 data-i18n-key="scoreboard_subtitle">Top Climbers</h2>
+        <div class="btn-group">
+          <button id="sort-time" class="btn primary-btn" data-i18n-key="btn_sort_time">
+            Sort by Lowest Time
+          </button>
+          <button id="sort-steps" class="btn secondary-btn" data-i18n-key="btn_sort_steps">
+            Sort by Most Steps
+          </button>
+        </div>
+      </section>
+
+      <section class="scoreboard-table-wrapper">
+        <table class="scoreboard-table">
+          <thead>
+            <tr>
+              <th data-i18n-key="th_rank">#</th>
+              <th data-i18n-key="th_name">Name</th>
+              <th data-i18n-key="th_floors">Floors</th>
+              <th data-i18n-key="th_steps">Steps</th>
+              <th data-i18n-key="th_time">Time</th>
+              <th data-i18n-key="th_date">Date</th>
+            </tr>
+          </thead>
+          <tbody id="scoreboard-body">
+            <!-- Rows will be injected here -->
+          </tbody>
+        </table>
+        <p id="scoreboard-empty" class="empty-message" data-i18n-key="scoreboard_empty">
+          No climbs yet. Be the first to take the stairs!
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/scoreboard.js"></script>
+  <script>
+    document.getElementById('lang-toggle').addEventListener('click', toggleLanguage);
+  </script>
+</body>
+</html>
