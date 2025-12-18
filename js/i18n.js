@@ -58,6 +58,8 @@ const I18N_DICTIONARY = {
     label_time_elapsed: 'Time Elapsed',
     btn_scan_qr: 'Scan Floor QR Code',
     label_your_rank: 'Your Rank',
+    btn_sort_time_short: '⏱ Time',
+    btn_sort_steps_short: '🦵 Steps',
   },
     ar: {
       app_title: 'تحفيز السلالم',
@@ -116,6 +118,8 @@ const I18N_DICTIONARY = {
       label_time_elapsed: 'الوقت المنقضي',
       btn_scan_qr: 'امسح رمز الطابق',
       label_your_rank: 'ترتيبك',
+      btn_sort_time_short: '⏱ الوقت',
+      btn_sort_steps_short: '🦵 الدرجات',
     },
   };
   

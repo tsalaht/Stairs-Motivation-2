@@ -70,6 +70,35 @@
           📊 <span data-i18n-key="btn_view_scoreboard">View Scoreboard</span>
         </button>
       </div>
+
+      <!-- Scoreboard Section -->
+      <div class="result-scoreboard-section">
+        <div class="scoreboard-header">
+          <h3 class="scoreboard-title">📊 <span data-i18n-key="scoreboard_title">Leaderboard</span></h3>
+          <div class="scoreboard-sort-tabs">
+            <button id="sort-time-result" class="sort-tab active" data-i18n-key="btn_sort_time_short">⏱ Time</button>
+            <button id="sort-steps-result" class="sort-tab" data-i18n-key="btn_sort_steps_short">🦵 Steps</button>
+          </div>
+        </div>
+        <div class="scoreboard-table-compact">
+          <table class="scoreboard-table-mini">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th data-i18n-key="th_name">Name</th>
+                <th data-i18n-key="th_steps">Steps</th>
+                <th data-i18n-key="th_time">Time</th>
+              </tr>
+            </thead>
+            <tbody id="scoreboard-body-result">
+              <!-- Rows injected here -->
+            </tbody>
+          </table>
+          <p id="scoreboard-empty-result" class="empty-message" data-i18n-key="scoreboard_empty">
+            No climbs yet. Be the first!
+          </p>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -81,6 +110,78 @@
       const mins = Math.floor(s / 60);
       const secs = s % 60;
       return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
+    }
+
+    // Scoreboard functions
+    let userScoresData = [];
+    let currentUserName = '';
+
+    function loadScoreboard() {
+      const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+      const scoresObj = appState.userScores || {};
+      userScoresData = Object.values(scoresObj);
+      currentUserName = appState.userName || '';
+    }
+
+    function renderScoreboard() {
+      const tbody = document.getElementById('scoreboard-body-result');
+      const emptyMsg = document.getElementById('scoreboard-empty-result');
+
+      tbody.innerHTML = '';
+
+      if (!userScoresData.length) {
+        emptyMsg.style.display = 'block';
+        return;
+      }
+      emptyMsg.style.display = 'none';
+
+      // Show top 5 only
+      const topUsers = userScoresData.slice(0, 5);
+
+      topUsers.forEach((user, index) => {
+        const tr = document.createElement('tr');
+        
+        // Highlight current user
+        if (user.name === currentUserName) {
+          tr.classList.add('current-user');
+        }
+
+        const rankTd = document.createElement('td');
+        if (index === 0) rankTd.innerHTML = '🥇';
+        else if (index === 1) rankTd.innerHTML = '🥈';
+        else if (index === 2) rankTd.innerHTML = '🥉';
+        else rankTd.textContent = index + 1;
+
+        const nameTd = document.createElement('td');
+        nameTd.textContent = user.name || '-';
+
+        const stepsTd = document.createElement('td');
+        stepsTd.textContent = user.totalSteps || 0;
+
+        const timeTd = document.createElement('td');
+        timeTd.textContent = formatDuration(user.bestTime || 0);
+
+        tr.appendChild(rankTd);
+        tr.appendChild(nameTd);
+        tr.appendChild(stepsTd);
+        tr.appendChild(timeTd);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function sortByTime() {
+      userScoresData.sort((a, b) => (a.bestTime || 0) - (b.bestTime || 0));
+      renderScoreboard();
+      document.getElementById('sort-time-result').classList.add('active');
+      document.getElementById('sort-steps-result').classList.remove('active');
+    }
+
+    function sortBySteps() {
+      userScoresData.sort((a, b) => (b.totalSteps || 0) - (a.totalSteps || 0));
+      renderScoreboard();
+      document.getElementById('sort-steps-result').classList.add('active');
+      document.getElementById('sort-time-result').classList.remove('active');
     }
 
     function loadResult() {
@@ -165,11 +266,17 @@
 
     document.getElementById('lang-toggle').addEventListener('click', toggleLanguage);
 
+    // Sort buttons for scoreboard
+    document.getElementById('sort-time-result').addEventListener('click', sortByTime);
+    document.getElementById('sort-steps-result').addEventListener('click', sortBySteps);
+
     (function init() {
       const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
       const lang = appState.lang || 'en';
       setLanguage(lang);
       loadResult();
+      loadScoreboard();
+      sortBySteps(); // Default sort by steps
     })();
   </script>
 </body>

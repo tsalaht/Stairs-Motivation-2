@@ -941,6 +941,112 @@
   border-color: rgba(8, 190, 213, 0.5);
 }
 
+/* Result Page Scoreboard */
+
+.result-scoreboard-section {
+  margin-top: 24px;
+  background: linear-gradient(135deg, rgba(0, 59, 86, 0.3), rgba(0, 36, 57, 0.5));
+  border-radius: 16px;
+  padding: 20px 16px;
+  border: 1px solid rgba(8, 190, 213, 0.2);
+}
+
+.scoreboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.scoreboard-title {
+  font-size: 1.1rem;
+  color: var(--text);
+  margin: 0;
+  font-weight: 700;
+}
+
+.scoreboard-sort-tabs {
+  display: flex;
+  gap: 8px;
+  background: rgba(0, 24, 36, 0.6);
+  padding: 4px;
+  border-radius: 20px;
+}
+
+.sort-tab {
+  background: transparent;
+  border: none;
+  color: #8f9ba8;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.sort-tab.active {
+  background: rgba(8, 190, 213, 0.2);
+  color: var(--accent);
+}
+
+.sort-tab:hover {
+  color: var(--text);
+}
+
+.scoreboard-table-compact {
+  overflow-x: auto;
+}
+
+.scoreboard-table-mini {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.scoreboard-table-mini th,
+.scoreboard-table-mini td {
+  padding: 10px 8px;
+  text-align: left;
+  border-bottom: 1px solid rgba(8, 190, 213, 0.1);
+}
+
+.scoreboard-table-mini th {
+  font-weight: 600;
+  color: #8f9ba8;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.scoreboard-table-mini tbody tr {
+  transition: background 0.2s ease;
+}
+
+.scoreboard-table-mini tbody tr:hover {
+  background: rgba(8, 190, 213, 0.05);
+}
+
+.scoreboard-table-mini tbody tr.current-user {
+  background: rgba(8, 190, 213, 0.15);
+  font-weight: 600;
+}
+
+.scoreboard-table-mini td:first-child {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.scoreboard-table-mini .empty-message {
+  text-align: center;
+  padding: 20px;
+  color: #8f9ba8;
+  font-size: 0.9rem;
+}
+
 /* Responsive tweaks */
 
 @media (min-width: 600px) {
