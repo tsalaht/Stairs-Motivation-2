@@ -7,72 +7,69 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div class="app-container">
-    <header class="app-header">
+  <div class="app-container result-page">
+    <header class="app-header-minimal">
       <button class="btn back-btn" onclick="window.location.href='scanner.html'">
         ←
       </button>
-      <h1 data-i18n-key="result_title">Your Result</h1>
+      <p id="res-username" class="username-display"></p>
       <button id="lang-toggle" class="lang-toggle" data-i18n-key="btn_lang_ar">عربي</button>
     </header>
 
-    <main class="card">
-      <section class="result-summary">
-        <div class="result-header-row">
-          <div class="result-header-left">
-            <div class="game-badge">🏆 Session Result</div>
-            <h2 class="game-title" data-i18n-key="result_summary_title">Session Summary</h2>
-          </div>
-          <div class="result-medal" id="res-medal">🥉</div>
+    <main class="result-main">
+      <!-- Stats Grid: 2x2 cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">⏱</div>
+          <p class="stat-label" data-i18n-key="label_time_spent">Time</p>
+          <p id="res-time" class="stat-value">00:00.00</p>
         </div>
-        <p id="res-direction" class="info-line"></p>
-        <p id="res-rank" class="info-line"></p>
-        <div class="result-grid">
-          <div class="result-item">
-            <span class="label" data-i18n-key="label_name">Name</span>
-            <span id="res-name" class="value"></span>
-          </div>
-          <div class="result-item">
-            <span class="label" data-i18n-key="label_start_floor">Start floor</span>
-            <span id="res-start-floor" class="value"></span>
-          </div>
-          <div class="result-item">
-            <span class="label" data-i18n-key="label_end_floor">End floor</span>
-            <span id="res-end-floor" class="value"></span>
-          </div>
-          <div class="result-item">
-            <span class="label" data-i18n-key="label_floors_climbed">Floors climbed</span>
-            <span id="res-floors" class="value"></span>
-          </div>
-          <div class="result-item">
-            <span class="label" data-i18n-key="label_steps_climbed">Steps climbed</span>
-            <span id="res-steps" class="value"></span>
-          </div>
-          <div class="result-item">
-            <span class="label" data-i18n-key="label_time_spent">Time spent</span>
-            <span id="res-time" class="value"></span>
-          </div>
-          <div class="result-item">
-            <span class="label" data-i18n-key="label_avg_per_floor">Avg time/floor</span>
-            <span id="res-avg" class="value"></span>
-          </div>
-        </div>
-      </section>
 
-      <section class="actions">
-        <button class="btn primary-btn" id="btn-continue" data-i18n-key="btn_continue_climbing">
-          ▶ Continue Climbing
+        <div class="stat-card">
+          <div class="stat-icon">🪜</div>
+          <p class="stat-label" data-i18n-key="label_steps_climbed">Steps</p>
+          <p id="res-steps" class="stat-value">0</p>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">📍</div>
+          <p class="stat-label" data-i18n-key="label_floors_climbed">Floors</p>
+          <p id="res-floors" class="stat-value">0</p>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <p class="stat-label" data-i18n-key="label_avg_per_floor">Avg/Floor</p>
+          <p id="res-avg" class="stat-value">—</p>
+        </div>
+      </div>
+
+      <!-- Large Rank Card -->
+      <div class="rank-card-large">
+        <div class="rank-icon-wrapper">
+          <div class="rank-icon" id="res-medal">🏆</div>
+        </div>
+        <p class="rank-label" data-i18n-key="label_your_rank">Your Rank</p>
+        <p id="res-rank-number" class="rank-value">#1</p>
+        <p id="res-rank-details" class="rank-details">Total: 0 steps</p>
+      </div>
+
+      <!-- Direction text (hidden initially) -->
+      <p id="res-direction" class="direction-text"></p>
+
+      <!-- Action Buttons -->
+      <button class="btn-action-large" onclick="window.location.href='index.html'">
+        🏠 <span data-i18n-key="btn_back_home">Back to Home</span>
+      </button>
+
+      <div class="result-actions">
+        <button class="btn-text-action" id="btn-continue">
+          ▶ <span data-i18n-key="btn_continue_climbing">Continue Climbing</span>
         </button>
-        <button class="btn secondary-btn" onclick="window.location.href='scanner.html'" data-i18n-key="btn_new_session">
-          🔁 New Session
+        <button class="btn-text-action" onclick="window.location.href='scoreboard.html'">
+          📊 <span data-i18n-key="btn_view_scoreboard">View Scoreboard</span>
         </button>
-        <button class="btn secondary-btn" onclick="window.location.href='scoreboard.html'" data-i18n-key="btn_view_scoreboard">
-          📊 View Scoreboard
-        </button>
-        <button class="btn tertiary-btn" onclick="window.location.href='index.html'" data-i18n-key="btn_back_home">
-          ⬅ Back to Home
-        </button>
-      </section>
+      </div>
     </main>
   </div>
 
@@ -80,10 +77,10 @@
   <script>
     function formatDuration(seconds) {
       const s = Math.floor(seconds);
-      const ms = Math.round((seconds - s) * 10);
+      const cs = Math.floor((seconds - s) * 100);
       const mins = Math.floor(s / 60);
       const secs = s % 60;
-      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${ms}`;
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
     }
 
     function loadResult() {
@@ -94,12 +91,16 @@
         return;
       }
 
-      document.getElementById('res-name').textContent = session.name || '-';
-      document.getElementById('res-start-floor').textContent = session.startFloor;
-      document.getElementById('res-end-floor').textContent = session.endFloor;
-      document.getElementById('res-floors').textContent = session.floors;
-      document.getElementById('res-steps').textContent = session.steps;
+      // Username display
+      const usernameEl = document.getElementById('res-username');
+      if (usernameEl) {
+        usernameEl.textContent = session.name || 'Player';
+      }
+
+      // Stat cards
       document.getElementById('res-time').textContent = formatDuration(session.durationSec);
+      document.getElementById('res-steps').textContent = session.steps;
+      document.getElementById('res-floors').textContent = session.floors;
       document.getElementById('res-avg').textContent =
         session.floors > 0 ? formatDuration(session.avgPerFloorSec) : '—';
 
@@ -111,24 +112,43 @@
         dirEl.textContent = `⬆ ${session.steps} steps UP – great climb!`;
       }
 
-      // Rank text from scoreboard (if available)
-      const rankEl = document.getElementById('res-rank');
+      // Rank card
+      const rankNumberEl = document.getElementById('res-rank-number');
+      const rankDetailsEl = document.getElementById('res-rank-details');
       const medalEl = document.getElementById('res-medal');
-      if (session.rankBySteps) {
-        const rank = session.rankBySteps;
-        rankEl.textContent = `Your current position on the scoreboard by steps: #${rank}`;
-        if (rank === 1) {
-          medalEl.textContent = '🥇';
-        } else if (rank === 2) {
-          medalEl.textContent = '🥈';
-        } else if (rank === 3) {
-          medalEl.textContent = '🥉';
+      const userScores = appState.userScores || {};
+      const userName = session.name;
+      
+      if (userScores[userName]) {
+        const userStats = userScores[userName];
+        // Calculate rank by total steps
+        const allUsers = Object.values(userScores);
+        const sortedBySteps = [...allUsers].sort((a, b) => b.totalSteps - a.totalSteps);
+        const userIndex = sortedBySteps.findIndex((u) => u.name === userName);
+        const rank = userIndex >= 0 ? userIndex + 1 : null;
+        
+        if (rank) {
+          rankNumberEl.textContent = `#${rank}`;
+          rankDetailsEl.textContent = `Total: ${userStats.totalSteps} steps across ${userStats.sessionCount} session${userStats.sessionCount > 1 ? 's' : ''}`;
+          
+          if (rank === 1) {
+            medalEl.textContent = '🥇';
+          } else if (rank === 2) {
+            medalEl.textContent = '🥈';
+          } else if (rank === 3) {
+            medalEl.textContent = '🥉';
+          } else {
+            medalEl.textContent = '🏆';
+          }
         } else {
-          medalEl.textContent = '🎖️';
+          rankNumberEl.textContent = '#?';
+          rankDetailsEl.textContent = `Total: ${userStats.totalSteps} steps`;
+          medalEl.textContent = '🎮';
         }
       } else {
-        rankEl.textContent = '';
-        medalEl.textContent = '🎮';
+        rankNumberEl.textContent = '#1';
+        rankDetailsEl.textContent = `Total: ${session.steps} steps`;
+        medalEl.textContent = '🏆';
       }
     }
 

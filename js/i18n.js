@@ -52,10 +52,13 @@ const I18N_DICTIONARY = {
       error_scanner_not_ready: 'Scanner not ready yet.',
       toast_start_floor: 'Start floor: {floor}. Now climb and scan your end floor.',
       toast_end_floor: 'End floor: {floor}. Session saved.',
-      btn_lang_ar: 'عربي',
-      btn_lang_en: 'English',
-      scanner_using_current_floor: 'Current floor: {floor}. Scan your next floor.',
-    },
+    btn_lang_ar: 'عربي',
+    btn_lang_en: 'English',
+    scanner_using_current_floor: 'Current floor: {floor}. Scan your next floor.',
+    label_time_elapsed: 'Time Elapsed',
+    btn_scan_qr: 'Scan Floor QR Code',
+    label_your_rank: 'Your Rank',
+  },
     ar: {
       app_title: 'تحفيز السلالم',
       welcome_title: 'مرحباً',
@@ -110,6 +113,9 @@ const I18N_DICTIONARY = {
       btn_lang_ar: 'عربي',
       btn_lang_en: 'English',
       scanner_using_current_floor: 'الطابق الحالي: {floor}. امسح الطابق التالي.',
+      label_time_elapsed: 'الوقت المنقضي',
+      btn_scan_qr: 'امسح رمز الطابق',
+      label_your_rank: 'ترتيبك',
     },
   };
   

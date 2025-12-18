@@ -31,13 +31,13 @@
       }
     }
   
-    function format(seconds) {
-      const s = Math.floor(seconds);
-      const ms = Math.round((seconds - s) * 10);
-      const mins = Math.floor(s / 60);
-      const secs = s % 60;
-      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${ms}`;
-    }
+  function format(seconds) {
+    const s = Math.floor(seconds);
+    const cs = Math.floor((seconds - s) * 100); // centiseconds (2 decimal places)
+    const mins = Math.floor(s / 60);
+    const secs = s % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
+  }
   
     window.stairTimer = {
       start,

@@ -606,17 +606,377 @@
     justify-content: center;
   }
   
-  /* Responsive tweaks */
-  
-  @media (min-width: 600px) {
-    .card {
-      padding: 22px 22px 20px;
-    }
-  
-    .timer-display {
-      font-size: 1.6rem;
-    }
+/* Scanner Page - Large Timer Layout */
+
+.scanner-page {
+  background: linear-gradient(180deg, #001824 0%, #000810 100%);
+}
+
+.app-header-minimal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  gap: 8px;
+}
+
+.username-display {
+  flex: 1;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.scanner-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+  padding: 20px;
+  position: relative;
+}
+
+/* Timer Icon with Glow */
+
+.timer-icon-wrapper {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.timer-glow-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 87, 34, 0.9) 0%, rgba(255, 87, 34, 0.4) 40%, transparent 70%);
+  border-radius: 50%;
+  animation: glowPulse 2s ease-in-out infinite;
+  filter: blur(8px);
+}
+
+.timer-icon {
+  position: relative;
+  z-index: 2;
+  font-size: 4rem;
+  filter: drop-shadow(0 0 20px rgba(255, 87, 34, 0.8));
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
   }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* Time Label */
+
+.time-label {
+  font-size: 1rem;
+  color: #8f9ba8;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin: 0 0 16px 0;
+  font-weight: 500;
+}
+
+/* Large Timer Display */
+
+.timer-display-large {
+  font-family: 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 4.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  text-align: center;
+  margin: 0 0 24px 0;
+  text-shadow: 0 0 30px rgba(8, 190, 213, 0.4);
+  line-height: 1;
+}
+
+.scanner-status-text {
+  font-size: 0.95rem;
+  color: var(--accent);
+  text-align: center;
+  min-height: 24px;
+  margin: 0 0 32px 0;
+}
+
+/* Hidden QR Reader (shown when needed) */
+
+.qr-reader-hidden {
+  display: none;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 20px;
+}
+
+.qr-reader-hidden.active {
+  display: block;
+}
+
+/* Large Scan Button */
+
+.btn-scan-large {
+  width: calc(100% - 32px);
+  max-width: 400px;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #ff5722 0%, #ff7043 100%);
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 8px 24px rgba(255, 87, 34, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 20px;
+}
+
+.btn-scan-large:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(255, 87, 34, 0.5);
+}
+
+.btn-scan-large:active {
+  transform: translateY(0);
+}
+
+/* Scanner Action Buttons */
+
+.scanner-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.btn-text {
+  background: transparent;
+  border: none;
+  color: #8f9ba8;
+  font-size: 0.95rem;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.btn-text:hover {
+  color: var(--text);
+}
+
+/* Result Page - Card Layout */
+
+.result-page {
+  background: linear-gradient(180deg, #001824 0%, #000810 100%);
+}
+
+.result-main {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Stats Grid - 2x2 Cards */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, rgba(0, 59, 86, 0.5), rgba(0, 36, 57, 0.7));
+  border-radius: 16px;
+  padding: 20px 16px;
+  text-align: center;
+  border: 1px solid rgba(8, 190, 213, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 8px rgba(8, 190, 213, 0.4));
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #8f9ba8;
+  margin: 0 0 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  font-family: 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Large Rank Card */
+
+.rank-card-large {
+  background: linear-gradient(135deg, #ff5722 0%, #ff7043 50%, #ff8a65 100%);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(255, 87, 34, 0.4);
+  margin-top: 8px;
+}
+
+.rank-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.rank-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.rank-label {
+  font-size: 1rem;
+  color: rgba(0, 0, 0, 0.7);
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.rank-value {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #000000;
+  margin: 0;
+  line-height: 1;
+  font-family: 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, monospace;
+}
+
+.rank-details {
+  font-size: 0.95rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 8px 0 0 0;
+  font-weight: 500;
+}
+
+/* Direction Text */
+
+.direction-text {
+  font-size: 0.9rem;
+  color: var(--accent);
+  text-align: center;
+  margin: 0;
+}
+
+/* Large Action Button */
+
+.btn-action-large {
+  width: 100%;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #ff5722 0%, #ff7043 100%);
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 8px 24px rgba(255, 87, 34, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 8px;
+}
+
+.btn-action-large:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(255, 87, 34, 0.5);
+}
+
+.btn-action-large:active {
+  transform: translateY(0);
+}
+
+/* Result Action Buttons */
+
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.btn-text-action {
+  background: rgba(0, 59, 86, 0.4);
+  border: 1px solid rgba(8, 190, 213, 0.3);
+  color: var(--text);
+  font-size: 0.95rem;
+  padding: 12px 24px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 300px;
+}
+
+.btn-text-action:hover {
+  background: rgba(0, 59, 86, 0.6);
+  border-color: rgba(8, 190, 213, 0.5);
+}
+
+/* Responsive tweaks */
+
+@media (min-width: 600px) {
+  .card {
+    padding: 22px 22px 20px;
+  }
+
+  .timer-display {
+    font-size: 1.6rem;
+  }
+
+  .timer-display-large {
+    font-size: 5.5rem;
+  }
+
+  .timer-icon-wrapper {
+    width: 220px;
+    height: 220px;
+  }
+
+  .timer-icon {
+    font-size: 5rem;
+  }
+
+  .stats-grid {
+    gap: 16px;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+  }
+
+  .rank-value {
+    font-size: 5rem;
+  }
+}
 
   /* Animations */
 

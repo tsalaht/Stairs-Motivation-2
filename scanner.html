@@ -7,50 +7,48 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div class="app-container">
-    <header class="app-header">
+  <div class="app-container scanner-page">
+    <header class="app-header-minimal">
       <button class="btn back-btn" onclick="window.location.href='index.html'">
         ←
       </button>
-      <h1 data-i18n-key="scanner_title">Scan Floor QR</h1>
+      <p id="scanner-username" class="username-display"></p>
       <button id="lang-toggle" class="lang-toggle" data-i18n-key="btn_lang_ar">عربي</button>
     </header>
 
-    <main class="card">
-      <section class="info-block">
-        <p id="scanner-username" class="info-line"></p>
-        <p class="info-line" data-i18n-key="scanner_instruction">
-          Scan the QR code at your current floor to start.
-        </p>
-      </section>
+    <main class="scanner-main">
+      <!-- Glowing stopwatch icon -->
+      <div class="timer-icon-wrapper">
+        <div class="timer-glow-circle"></div>
+        <div class="timer-icon">⏱</div>
+      </div>
 
-      <section class="timer-block">
-        <span class="timer-label" data-i18n-key="label_timer">Time</span>
-        <div id="timer-display" class="timer-display">00:00.0</div>
-      </section>
+      <!-- Time elapsed label -->
+      <p class="time-label" data-i18n-key="label_time_elapsed">Time Elapsed</p>
 
-      <section class="scanner-block">
-        <div id="qr-reader" class="qr-reader"></div>
-        <div id="scanner-status" class="status-message"></div>
-      </section>
+      <!-- Large centered timer -->
+      <div id="timer-display" class="timer-display-large">00:00.00</div>
 
-      <section class="actions">
-        <button id="btn-restart" class="btn secondary-btn" data-i18n-key="btn_restart_session">
-          Restart Session
+      <!-- Status message -->
+      <p id="scanner-status" class="scanner-status-text"></p>
+
+      <!-- Hidden QR reader (only visible when scanning) -->
+      <div id="qr-reader" class="qr-reader-hidden"></div>
+
+      <!-- Large scan button -->
+      <button id="btn-scan" class="btn-scan-large">
+        ↑ <span data-i18n-key="btn_scan_qr">Scan Floor QR Code</span>
+      </button>
+
+      <!-- Action buttons -->
+      <div class="scanner-actions">
+        <button id="btn-restart" class="btn-text" data-i18n-key="btn_restart_session">
+          ✕ Restart Session
         </button>
-        <button id="btn-stop" class="btn danger-btn" data-i18n-key="btn_cancel_session">
-          Cancel
-        </button>
-        <button id="btn-change-player" class="btn tertiary-btn">
+        <button id="btn-change-player" class="btn-text">
           👤 Change Player
         </button>
-      </section>
-
-      <section class="hint-block">
-        <p class="hint" data-i18n-key="scanner_hint_start">
-          1) Scan your start floor. 2) Climb. 3) Scan your end floor.
-        </p>
-      </section>
+      </div>
     </main>
   </div>
 

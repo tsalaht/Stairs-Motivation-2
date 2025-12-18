@@ -7,9 +7,11 @@
     let endFloor = null;
     let lastScanValue = null;
   
-    const timerDisplay = document.getElementById('timer-display');
-    const statusEl = document.getElementById('scanner-status');
-    const usernameEl = document.getElementById('scanner-username');
+  const timerDisplay = document.getElementById('timer-display');
+  const statusEl = document.getElementById('scanner-status');
+  const usernameEl = document.getElementById('scanner-username');
+  const scanBtn = document.getElementById('btn-scan');
+  const qrReaderEl = document.getElementById('qr-reader');
   
     function setStatus(message) {
       if (statusEl) {
@@ -93,18 +95,46 @@
           direction,
           timestamp: Date.now(),
         };
-  
-        appState.lastSession = session;
-        const sessions = appState.sessions || [];
-        sessions.push(session);
-        appState.sessions = sessions;
 
-        // Compute rank by steps (gamified scoreboard position)
-        const sortedBySteps = [...sessions].sort((a, b) => b.steps - a.steps);
-        const indexBySteps = sortedBySteps.findIndex(
-          (s) => s.timestamp === session.timestamp
-        );
-        session.rankBySteps = indexBySteps >= 0 ? indexBySteps + 1 : null;
+        appState.lastSession = session;
+        
+        // Aggregate scores by username instead of storing individual sessions
+        const userName = appState.userName || 'Unknown';
+        const userScores = appState.userScores || {};
+        
+        if (userScores[userName]) {
+          // User exists - aggregate the new session with existing stats
+          const existing = userScores[userName];
+          existing.totalFloors += floors;
+          existing.totalSteps += steps;
+          existing.totalTime += elapsed;
+          existing.sessionCount += 1;
+          existing.lastTimestamp = Date.now();
+          // Keep best (lowest) time
+          if (elapsed < existing.bestTime || existing.bestTime === 0) {
+            existing.bestTime = elapsed;
+          }
+        } else {
+          // New user - create aggregated entry
+          userScores[userName] = {
+            name: userName,
+            totalFloors: floors,
+            totalSteps: steps,
+            totalTime: elapsed,
+            bestTime: elapsed,
+            sessionCount: 1,
+            lastTimestamp: Date.now(),
+          };
+        }
+        
+        appState.userScores = userScores;
+        
+        // Compute rank by total steps (gamified scoreboard position)
+        const allUsers = Object.values(userScores);
+        const sortedBySteps = [...allUsers].sort((a, b) => b.totalSteps - a.totalSteps);
+        const userIndex = sortedBySteps.findIndex((u) => u.name === userName);
+        session.rankBySteps = userIndex >= 0 ? userIndex + 1 : null;
+        
         // Current floor becomes end floor for continuation
         appState.currentFloor = endFloor;
         localStorage.setItem('stairApp', JSON.stringify(appState));
@@ -124,21 +154,32 @@
       // We keep this silent to avoid spamming user
     }
   
-    function startScanner() {
-      if (!window.Html5Qrcode) {
-        setStatus('html5-qrcode library not loaded.');
-        return;
-      }
-      const cameraId = 'qr-reader';
-      html5QrCode = new Html5Qrcode(cameraId);
-      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-  
+  function startScanner() {
+    if (!window.Html5Qrcode) {
+      setStatus('html5-qrcode library not loaded.');
+      return;
+    }
+    
+    // Show QR reader
+    if (qrReaderEl) {
+      qrReaderEl.classList.add('active');
+    }
+    
+    // Hide scan button when camera is active
+    if (scanBtn) {
+      scanBtn.style.display = 'none';
+    }
+
+    const cameraId = 'qr-reader';
+    html5QrCode = new Html5Qrcode(cameraId);
+    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
     Html5Qrcode.getCameras()
       .then((devices) => {
         if (!devices || !devices.length) {
-            setStatus('No camera found on this device.');
-            return;
-          }
+          setStatus('No camera found on this device.');
+          return;
+        }
 
         // Prefer back camera on mobile (look for labels containing back/rear/environment)
         let camera = devices[0];
@@ -149,65 +190,74 @@
           camera = backCam;
         }
 
-          isScannerReady = true;
-          return html5QrCode.start(
-            camera.id,
-            config,
-            (decodedText) => onScanSuccess(decodedText),
-            onScanFailure
-          );
-        })
-        .catch(() => {
-          setStatus('Unable to access camera. Check permissions.');
-        });
-    }
-  
-    function stopScanner() {
-      if (html5QrCode && isScannerReady) {
-        html5QrCode.stop().catch(() => {});
-      }
-    }
-  
-    function resetSession() {
-      stairTimer.stop();
-      timerDisplay.textContent = '00:00.0';
-      startFloor = null;
-      endFloor = null;
-      lastScanValue = null;
-      setStatus(getI18nText('scanner_instruction'));
-    }
-  
-    // Buttons
-  
-    document.getElementById('btn-restart').addEventListener('click', () => {
-      resetSession();
-    });
-  
-    document.getElementById('btn-stop').addEventListener('click', () => {
-      stairTimer.stop();
-      stopScanner();
-      window.location.href = 'index.html';
-    });
-
-    const changePlayerBtn = document.getElementById('btn-change-player');
-    if (changePlayerBtn) {
-      changePlayerBtn.addEventListener('click', () => {
-        // Stop current session and clear player-related data so a new name can be used
-        stairTimer.stop();
-        stopScanner();
-        const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
-        delete appState.userName;
-        delete appState.currentFloor;
-        localStorage.setItem('stairApp', JSON.stringify(appState));
-        window.location.href = 'index.html';
+        isScannerReady = true;
+        return html5QrCode.start(
+          camera.id,
+          config,
+          (decodedText) => onScanSuccess(decodedText),
+          onScanFailure
+        );
+      })
+      .catch(() => {
+        setStatus('Unable to access camera. Check permissions.');
       });
+  }
+  
+  function stopScanner() {
+    if (html5QrCode && isScannerReady) {
+      html5QrCode.stop().catch(() => {});
     }
+    // Hide QR reader
+    if (qrReaderEl) {
+      qrReaderEl.classList.remove('active');
+    }
+    // Show scan button again
+    if (scanBtn) {
+      scanBtn.style.display = 'block';
+    }
+  }
   
-    // Initialize
+  function resetSession() {
+    stairTimer.stop();
+    timerDisplay.textContent = '00:00.00';
+    startFloor = null;
+    endFloor = null;
+    lastScanValue = null;
+    setStatus(getI18nText('scanner_instruction'));
+  }
   
-    document.addEventListener('DOMContentLoaded', function () {
-      initUser();
-      timerDisplay.textContent = '00:00.0';
+  // Buttons
+
+  if (scanBtn) {
+    scanBtn.addEventListener('click', () => {
       startScanner();
     });
+  }
+
+  document.getElementById('btn-restart').addEventListener('click', () => {
+    stopScanner();
+    resetSession();
+  });
+
+  const changePlayerBtn = document.getElementById('btn-change-player');
+  if (changePlayerBtn) {
+    changePlayerBtn.addEventListener('click', () => {
+      // Stop current session and clear player-related data so a new name can be used
+      stairTimer.stop();
+      stopScanner();
+      const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+      delete appState.userName;
+      delete appState.currentFloor;
+      localStorage.setItem('stairApp', JSON.stringify(appState));
+      window.location.href = 'index.html';
+    });
+  }
+  
+  // Initialize
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initUser();
+    timerDisplay.textContent = '00:00.00';
+    // Don't auto-start scanner - wait for user to tap the scan button
+  });
   })();
