@@ -80,6 +80,7 @@
         const floors = Math.abs(endFloor - startFloor);
         const steps = floors * 21;
         const avgPerFloor = floors > 0 ? elapsed / floors : elapsed;
+        const direction = endFloor > startFloor ? 'up' : 'down';
   
         const session = {
           name: appState.userName || 'Unknown',
@@ -89,6 +90,7 @@
           steps,
           durationSec: elapsed,
           avgPerFloorSec: avgPerFloor,
+          direction,
           timestamp: Date.now(),
         };
   
@@ -96,6 +98,13 @@
         const sessions = appState.sessions || [];
         sessions.push(session);
         appState.sessions = sessions;
+
+        // Compute rank by steps (gamified scoreboard position)
+        const sortedBySteps = [...sessions].sort((a, b) => b.steps - a.steps);
+        const indexBySteps = sortedBySteps.findIndex(
+          (s) => s.timestamp === session.timestamp
+        );
+        session.rankBySteps = indexBySteps >= 0 ? indexBySteps + 1 : null;
         // Current floor becomes end floor for continuation
         appState.currentFloor = endFloor;
         localStorage.setItem('stairApp', JSON.stringify(appState));

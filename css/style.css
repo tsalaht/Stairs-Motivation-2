@@ -67,6 +67,28 @@
     font-size: 1.25rem;
     letter-spacing: 0.03em;
   }
+
+  /* Game-like badge & title on home */
+  .game-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(8, 190, 213, 0.15);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .game-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
   
   .app-footer {
     margin-top: auto;

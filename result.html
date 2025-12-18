@@ -19,6 +19,8 @@
     <main class="card">
       <section class="result-summary">
         <h2 data-i18n-key="result_summary_title">Session Summary</h2>
+        <p id="res-direction" class="info-line"></p>
+        <p id="res-rank" class="info-line"></p>
         <div class="result-grid">
           <div class="result-item">
             <span class="label" data-i18n-key="label_name">Name</span>
@@ -94,6 +96,22 @@
       document.getElementById('res-time').textContent = formatDuration(session.durationSec);
       document.getElementById('res-avg').textContent =
         session.floors > 0 ? formatDuration(session.avgPerFloorSec) : '—';
+
+      // Direction text (up or down)
+      const dirEl = document.getElementById('res-direction');
+      if (session.direction === 'down') {
+        dirEl.textContent = `${session.steps} steps DOWN – nice control!`;
+      } else {
+        dirEl.textContent = `${session.steps} steps UP – great climb!`;
+      }
+
+      // Rank text from scoreboard (if available)
+      const rankEl = document.getElementById('res-rank');
+      if (session.rankBySteps) {
+        rankEl.textContent = `Your current position on the scoreboard by steps: #${session.rankBySteps}`;
+      } else {
+        rankEl.textContent = '';
+      }
     }
 
     document.getElementById('btn-continue').addEventListener('click', function () {

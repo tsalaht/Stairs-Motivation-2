@@ -14,7 +14,8 @@
     </header>
 
     <main class="card">
-      <h2 data-i18n-key="welcome_title">Welcome</h2>
+      <div class="game-badge" data-i18n-key="welcome_title">Stair Climb Challenge</div>
+      <h2 class="game-title" data-i18n-key="welcome_title">Welcome</h2>
       <p class="description" data-i18n-key="welcome_subtitle">
         Climb the stairs, track your progress, and stay motivated!
       </p>
@@ -46,7 +47,7 @@
         </div>
 
         <button type="submit" class="btn primary-btn" data-i18n-key="btn_start">
-          Start
+          Start Game
         </button>
       </form>
 
@@ -92,13 +93,22 @@
       window.location.href = 'scanner.html';
     });
 
-    // Initialize language from saved state
+    // Initialize language & name from saved state
     (function initLangFromStorage() {
       const saved = JSON.parse(localStorage.getItem('stairApp') || '{}');
       const lang = saved.lang || 'en';
       const radio = document.querySelector(`input[name="language"][value="${lang}"]`);
       if (radio) radio.checked = true;
       setLanguage(lang);
+
+      // Pre-fill username, and if it exists, auto-start the game after a short delay
+      if (saved.userName) {
+        const nameInput = document.getElementById('username');
+        nameInput.value = saved.userName;
+        setTimeout(() => {
+          window.location.href = 'scanner.html';
+        }, 800);
+      }
     })();
 
     // Toggle language via header button
