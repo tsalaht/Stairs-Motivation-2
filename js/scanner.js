@@ -188,6 +188,20 @@
       stopScanner();
       window.location.href = 'index.html';
     });
+
+    const changePlayerBtn = document.getElementById('btn-change-player');
+    if (changePlayerBtn) {
+      changePlayerBtn.addEventListener('click', () => {
+        // Stop current session and clear player-related data so a new name can be used
+        stairTimer.stop();
+        stopScanner();
+        const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+        delete appState.userName;
+        delete appState.currentFloor;
+        localStorage.setItem('stairApp', JSON.stringify(appState));
+        window.location.href = 'index.html';
+      });
+    }
   
     // Initialize
   
