@@ -124,13 +124,22 @@
       html5QrCode = new Html5Qrcode(cameraId);
       const config = { fps: 10, qrbox: { width: 250, height: 250 } };
   
-      Html5Qrcode.getCameras()
-        .then((devices) => {
-          const camera = devices[0];
-          if (!camera) {
+    Html5Qrcode.getCameras()
+      .then((devices) => {
+        if (!devices || !devices.length) {
             setStatus('No camera found on this device.');
             return;
           }
+
+        // Prefer back camera on mobile (look for labels containing back/rear/environment)
+        let camera = devices[0];
+        const backCam = devices.find((d) =>
+          /back|rear|environment/i.test(d.label || '')
+        );
+        if (backCam) {
+          camera = backCam;
+        }
+
           isScannerReady = true;
           return html5QrCode.start(
             camera.id,
