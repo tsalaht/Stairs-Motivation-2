@@ -784,6 +784,57 @@
   color: var(--text);
 }
 
+/* Saving overlay while syncing data */
+
+.saving-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.saving-overlay.visible {
+  display: flex;
+}
+
+.saving-card {
+  background: radial-gradient(circle at top, #ff7043, #ff5722);
+  padding: 20px 26px;
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 220px;
+}
+
+.saving-spinner {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  animation: savingSpin 0.9s linear infinite;
+}
+
+.saving-text {
+  font-size: 0.95rem;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@keyframes savingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Result Page - Card Layout */
 
 .result-page {

@@ -12,6 +12,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxVFWqeNjKnvdpaKZe8WEaK
   const usernameEl = document.getElementById('scanner-username');
   const scanBtn = document.getElementById('btn-scan');
   const qrReaderEl = document.getElementById('qr-reader');
+  const savingOverlay = document.getElementById('saving-overlay');
   
     function setStatus(message) {
       if (statusEl) {
@@ -105,6 +106,11 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxVFWqeNjKnvdpaKZe8WEaK
 
         const template = getI18nText('toast_end_floor');
         setStatus(i18nFormat(template, { floor: endFloor }));
+
+        // Show saving overlay while we sync data
+        if (savingOverlay) {
+          savingOverlay.classList.add('visible');
+        }
 
         // First sync score with Google Sheets, then navigate to result
         syncUserScore(session).finally(() => {
