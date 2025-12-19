@@ -22,6 +22,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxVFWqeNjKnvdpaKZe8WEaK
     function initUser() {
       const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
       if (!appState.userName) {
+        // If no name in local storage, just send back to home to register
         window.location.href = 'index.html';
         return;
       }

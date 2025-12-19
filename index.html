@@ -70,6 +70,33 @@
 
   <script src="js/i18n.js"></script>
   <script>
+    const API_URL =
+      'https://script.google.com/macros/s/AKfycbxVFWqeNjKnvdpaKZe8WEaKRzcSV-MaxUfyzptcq6CskDSul9kfixnlaXRZ865yrBAHDA/exec';
+
+    function createUserInBackend(name) {
+      try {
+        const payload = {
+          action: 'updateUser',
+          userData: {
+            name,
+            totalFloors: 0,
+            totalSteps: 0,
+            bestTime: 0,
+            sessionCount: 0,
+            lastTimestamp: Date.now(),
+          },
+        };
+        // Fire and forget; no need to block navigation
+        fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload),
+        }).catch((err) => console.error('createUserInBackend error', err));
+      } catch (err) {
+        console.error('createUserInBackend error', err);
+      }
+    }
+
     // Handle welcome form submission
     document.getElementById('welcome-form').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -82,11 +109,14 @@
 
       const lang = document.querySelector('input[name="language"]:checked')?.value || 'en';
 
-      // Save to LocalStorage
-      const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+      // Save to LocalStorage (only name/lang, no scores)
+      const appState = {};
       appState.userName = name;
       appState.lang = lang;
       localStorage.setItem('stairApp', JSON.stringify(appState));
+
+      // Ensure user exists in Google Sheets with zero stats
+      createUserInBackend(name);
 
       // Apply language and go to scanner
       setLanguage(lang);
