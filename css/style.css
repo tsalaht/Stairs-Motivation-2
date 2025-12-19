@@ -521,6 +521,13 @@
     font-size: 0.85rem;
     color: var(--text-muted);
   }
+
+.loading-message {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--accent);
+  text-align: center;
+}
   
   /* QR Generator */
   

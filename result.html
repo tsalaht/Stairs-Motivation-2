@@ -81,6 +81,7 @@
           </div>
         </div>
         <div class="scoreboard-table-compact">
+          <p id="scoreboard-loading-result" class="loading-message">Loading leaderboard...</p>
           <table class="scoreboard-table-mini">
             <thead>
               <tr>
@@ -123,6 +124,12 @@
       try {
         const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
         currentUserName = appState.userName || '';
+        const loading = document.getElementById('scoreboard-loading-result');
+        const empty = document.getElementById('scoreboard-empty-result');
+        const tbody = document.getElementById('scoreboard-body-result');
+        if (loading) loading.style.display = 'block';
+        if (empty) empty.style.display = 'none';
+        if (tbody) tbody.innerHTML = '';
         const response = await fetch(`${API_URL}?action=getLeaderboard&sort=steps`);
         if (!response.ok) {
           throw new Error('Failed to load leaderboard');
@@ -143,6 +150,9 @@
       } catch (error) {
         console.error('loadScoreboard error', error);
         userScoresData = [];
+      } finally {
+        const loading = document.getElementById('scoreboard-loading-result');
+        if (loading) loading.style.display = 'none';
       }
     }
 

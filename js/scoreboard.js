@@ -6,6 +6,7 @@
 
   const tbody = document.getElementById('scoreboard-body');
   const emptyMsg = document.getElementById('scoreboard-empty');
+  const loadingMsg = document.getElementById('scoreboard-loading');
   const sortTimeBtn = document.getElementById('sort-time');
   const sortStepsBtn = document.getElementById('sort-steps');
 
@@ -21,6 +22,10 @@
 
   async function loadScoresFromApi() {
     try {
+      if (loadingMsg) loadingMsg.style.display = 'block';
+      if (emptyMsg) emptyMsg.style.display = 'none';
+      tbody.innerHTML = '';
+
       const response = await fetch(`${API_URL}?action=getLeaderboard&sort=steps`);
       if (!response.ok) {
         throw new Error('Failed to load leaderboard');
@@ -41,6 +46,8 @@
     } catch (error) {
       console.error('loadScoresFromApi error', error);
       userScores = [];
+    } finally {
+      if (loadingMsg) loadingMsg.style.display = 'none';
     }
   }
 

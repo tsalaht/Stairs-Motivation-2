@@ -231,9 +231,10 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxVFWqeNjKnvdpaKZe8WEaK
         },
       };
 
+      // Use text/plain to avoid CORS preflight issues with Apps Script
       await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload),
       });
     } catch (error) {
