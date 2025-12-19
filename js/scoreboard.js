@@ -1,11 +1,14 @@
-// Loads sessions from LocalStorage and renders them in a sortable table.
+// Loads leaderboard from Google Sheets API and renders it.
 
 (function () {
-    const tbody = document.getElementById('scoreboard-body');
-    const emptyMsg = document.getElementById('scoreboard-empty');
-    const sortTimeBtn = document.getElementById('sort-time');
-    const sortStepsBtn = document.getElementById('sort-steps');
-  
+  const API_URL =
+    'https://script.google.com/macros/s/AKfycbxVFWqeNjKnvdpaKZe8WEaKRzcSV-MaxUfyzptcq6CskDSul9kfixnlaXRZ865yrBAHDA/exec';
+
+  const tbody = document.getElementById('scoreboard-body');
+  const emptyMsg = document.getElementById('scoreboard-empty');
+  const sortTimeBtn = document.getElementById('sort-time');
+  const sortStepsBtn = document.getElementById('sort-steps');
+
   let userScores = [];
 
   function formatDuration(seconds) {
@@ -16,11 +19,29 @@
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
   }
 
-  function loadSessions() {
-    const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
-    // Get aggregated user scores instead of individual sessions
-    const scoresObj = appState.userScores || {};
-    userScores = Object.values(scoresObj);
+  async function loadScoresFromApi() {
+    try {
+      const response = await fetch(`${API_URL}?action=getLeaderboard&sort=steps`);
+      if (!response.ok) {
+        throw new Error('Failed to load leaderboard');
+      }
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        userScores = data.map((u) => ({
+          name: u.name || '',
+          totalFloors: Number(u.totalFloors) || 0,
+          totalSteps: Number(u.totalSteps) || 0,
+          bestTime: Number(u.bestTime) || 0,
+          sessionCount: Number(u.sessionCount) || 0,
+          lastTimestamp: Number(u.lastTimestamp) || 0,
+        }));
+      } else {
+        userScores = [];
+      }
+    } catch (error) {
+      console.error('loadScoresFromApi error', error);
+      userScores = [];
+    }
   }
 
   function render() {
@@ -80,15 +101,15 @@
     userScores.sort((a, b) => (b.totalSteps || 0) - (a.totalSteps || 0));
     render();
   }
-  
-    sortTimeBtn.addEventListener('click', sortByTime);
-    sortStepsBtn.addEventListener('click', sortBySteps);
-  
-    document.addEventListener('DOMContentLoaded', function () {
-      const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
-      const lang = appState.lang || 'en';
-      setLanguage(lang);
-      loadSessions();
-      sortByTime();
-    });
-  })();
+
+  sortTimeBtn.addEventListener('click', sortByTime);
+  sortStepsBtn.addEventListener('click', sortBySteps);
+
+  document.addEventListener('DOMContentLoaded', async function () {
+    const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+    const lang = appState.lang || 'en';
+    setLanguage(lang);
+    await loadScoresFromApi();
+    sortByTime();
+  });
+})();

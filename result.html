@@ -112,15 +112,38 @@
       return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
     }
 
-    // Scoreboard functions
+    const API_URL =
+      'https://script.google.com/macros/s/AKfycbxVFWqeNjKnvdpaKZe8WEaKRzcSV-MaxUfyzptcq6CskDSul9kfixnlaXRZ865yrBAHDA/exec';
+
+    // Scoreboard data (from Google Sheets)
     let userScoresData = [];
     let currentUserName = '';
 
-    function loadScoreboard() {
-      const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
-      const scoresObj = appState.userScores || {};
-      userScoresData = Object.values(scoresObj);
-      currentUserName = appState.userName || '';
+    async function loadScoreboard() {
+      try {
+        const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+        currentUserName = appState.userName || '';
+        const response = await fetch(`${API_URL}?action=getLeaderboard&sort=steps`);
+        if (!response.ok) {
+          throw new Error('Failed to load leaderboard');
+        }
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          userScoresData = data.map((u) => ({
+            name: u.name || '',
+            totalFloors: Number(u.totalFloors) || 0,
+            totalSteps: Number(u.totalSteps) || 0,
+            bestTime: Number(u.bestTime) || 0,
+            sessionCount: Number(u.sessionCount) || 0,
+            lastTimestamp: Number(u.lastTimestamp) || 0,
+          }));
+        } else {
+          userScoresData = [];
+        }
+      } catch (error) {
+        console.error('loadScoreboard error', error);
+        userScoresData = [];
+      }
     }
 
     function renderScoreboard() {
@@ -217,18 +240,17 @@
       const rankNumberEl = document.getElementById('res-rank-number');
       const rankDetailsEl = document.getElementById('res-rank-details');
       const medalEl = document.getElementById('res-medal');
-      const userScores = appState.userScores || {};
       const userName = session.name;
-      
-      if (userScores[userName]) {
-        const userStats = userScores[userName];
+      const allUsers = userScoresData;
+
+      if (allUsers && allUsers.length) {
+        const userStats = allUsers.find((u) => u.name === userName);
         // Calculate rank by total steps
-        const allUsers = Object.values(userScores);
         const sortedBySteps = [...allUsers].sort((a, b) => b.totalSteps - a.totalSteps);
         const userIndex = sortedBySteps.findIndex((u) => u.name === userName);
         const rank = userIndex >= 0 ? userIndex + 1 : null;
         
-        if (rank) {
+        if (userStats && rank) {
           rankNumberEl.textContent = `#${rank}`;
           rankDetailsEl.textContent = `Total: ${userStats.totalSteps} steps across ${userStats.sessionCount} session${userStats.sessionCount > 1 ? 's' : ''}`;
           
@@ -241,7 +263,7 @@
           } else {
             medalEl.textContent = '🏆';
           }
-        } else {
+        } else if (userStats) {
           rankNumberEl.textContent = '#?';
           rankDetailsEl.textContent = `Total: ${userStats.totalSteps} steps`;
           medalEl.textContent = '🎮';
@@ -264,20 +286,21 @@
       window.location.href = 'scanner.html';
     });
 
-    document.getElementById('lang-toggle').addEventListener('click', toggleLanguage);
-
-    // Sort buttons for scoreboard
-    document.getElementById('sort-time-result').addEventListener('click', sortByTime);
-    document.getElementById('sort-steps-result').addEventListener('click', sortBySteps);
-
-    (function init() {
-      const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
-      const lang = appState.lang || 'en';
-      setLanguage(lang);
-      loadResult();
-      loadScoreboard();
-      sortBySteps(); // Default sort by steps
-    })();
+     document.getElementById('lang-toggle').addEventListener('click', toggleLanguage);
+ 
+     // Sort buttons for scoreboard
+     document.getElementById('sort-time-result').addEventListener('click', sortByTime);
+     document.getElementById('sort-steps-result').addEventListener('click', sortBySteps);
+ 
+     (async function init() {
+       const appState = JSON.parse(localStorage.getItem('stairApp') || '{}');
+       const lang = appState.lang || 'en';
+       setLanguage(lang);
+       await loadScoreboard();
+       loadResult();
+       sortBySteps(); // Default sort by steps
+     })();
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </body>
 </html>

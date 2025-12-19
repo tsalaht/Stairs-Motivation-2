@@ -1,5 +1,5 @@
 // Handles QR scanning, session creation & navigation to result page.
-
+const API_URL = 'https://script.google.com/macros/s/AKfycbxVFWqeNjKnvdpaKZe8WEaKRzcSV-MaxUfyzptcq6CskDSul9kfixnlaXRZ865yrBAHDA/exec';
 (function () {
     let html5QrCode = null;
     let isScannerReady = false;
@@ -97,51 +97,17 @@
         };
 
         appState.lastSession = session;
-        
-        // Aggregate scores by username instead of storing individual sessions
-        const userName = appState.userName || 'Unknown';
-        const userScores = appState.userScores || {};
-        
-        if (userScores[userName]) {
-          // User exists - aggregate the new session with existing stats
-          const existing = userScores[userName];
-          existing.totalFloors += floors;
-          existing.totalSteps += steps;
-          existing.totalTime += elapsed;
-          existing.sessionCount += 1;
-          existing.lastTimestamp = Date.now();
-          // Keep best (lowest) time
-          if (elapsed < existing.bestTime || existing.bestTime === 0) {
-            existing.bestTime = elapsed;
-          }
-        } else {
-          // New user - create aggregated entry
-          userScores[userName] = {
-            name: userName,
-            totalFloors: floors,
-            totalSteps: steps,
-            totalTime: elapsed,
-            bestTime: elapsed,
-            sessionCount: 1,
-            lastTimestamp: Date.now(),
-          };
-        }
-        
-        appState.userScores = userScores;
-        
-        // Compute rank by total steps (gamified scoreboard position)
-        const allUsers = Object.values(userScores);
-        const sortedBySteps = [...allUsers].sort((a, b) => b.totalSteps - a.totalSteps);
-        const userIndex = sortedBySteps.findIndex((u) => u.name === userName);
-        session.rankBySteps = userIndex >= 0 ? userIndex + 1 : null;
-        
+
         // Current floor becomes end floor for continuation
         appState.currentFloor = endFloor;
         localStorage.setItem('stairApp', JSON.stringify(appState));
-  
+
+        // Sync aggregated score with Google Sheets (fire and forget)
+        syncUserScore(session);
+
         const template = getI18nText('toast_end_floor');
         setStatus(i18nFormat(template, { floor: endFloor }));
-  
+
         // Small delay so user can read status before navigation
         setTimeout(() => {
           stopScanner();
@@ -224,6 +190,55 @@
     endFloor = null;
     lastScanValue = null;
     setStatus(getI18nText('scanner_instruction'));
+  }
+
+  // Send updated user totals to Google Sheets
+  async function syncUserScore(session) {
+    try {
+      const name = session.name || 'Unknown';
+
+      // Get current leaderboard to find existing totals for this user
+      const res = await fetch(`${API_URL}?action=getLeaderboard&sort=steps`);
+      let users = [];
+      if (res.ok) {
+        users = await res.json();
+      }
+
+      const existing = Array.isArray(users) ? users.find((u) => u.name === name) : null;
+
+      let totalFloors = session.floors;
+      let totalSteps = session.steps;
+      let bestTime = session.durationSec;
+      let sessionCount = 1;
+
+      if (existing) {
+        totalFloors += Number(existing.totalFloors) || 0;
+        totalSteps += Number(existing.totalSteps) || 0;
+        sessionCount += Number(existing.sessionCount) || 0;
+        const existingBest = Number(existing.bestTime) || 0;
+        bestTime = existingBest > 0 ? Math.min(existingBest, session.durationSec) : session.durationSec;
+      }
+
+      const payload = {
+        action: 'updateUser',
+        userData: {
+          name,
+          totalFloors,
+          totalSteps,
+          bestTime,
+          sessionCount,
+          lastTimestamp: Date.now(),
+        },
+      };
+
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      console.error('syncUserScore error', error);
+    }
   }
   
   // Buttons
