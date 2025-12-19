@@ -103,17 +103,16 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxVFWqeNjKnvdpaKZe8WEaK
         appState.currentFloor = endFloor;
         localStorage.setItem('stairApp', JSON.stringify(appState));
 
-        // Sync aggregated score with Google Sheets (fire and forget)
-        syncUserScore(session);
-
         const template = getI18nText('toast_end_floor');
         setStatus(i18nFormat(template, { floor: endFloor }));
 
-        // Small delay so user can read status before navigation
-        setTimeout(() => {
-          stopScanner();
-          window.location.href = 'result.html';
-        }, 600);
+        // First sync score with Google Sheets, then navigate to result
+        syncUserScore(session).finally(() => {
+          setTimeout(() => {
+            stopScanner();
+            window.location.href = 'result.html';
+          }, 400);
+        });
       }
     }
   
